@@ -53,14 +53,8 @@
   <!-- Entrada: al deslizar, la cámara cruza la puerta de la fachada y aparece la cocina. -->
   <section class="intro" id="intro" aria-label="Malandra">
     <div class="intro__stage" id="stage">
-      <!-- El logo y la fachada se dibujan al cargar: los trazos son una máscara sobre la imagen original. -->
-      <svg class="intro__logo draw" viewBox="0 0 1400 464" width="1400" height="464" role="img" aria-label="Malandra">
-        <mask id="logo-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1400" height="464">
-          <g class="draw__paths" stroke-width="96"><path pathLength="1" style="--d:0.15s;--t:0.53s" d="M48 123 56 185 45 196 46 342"/><path pathLength="1" style="--d:0.20s;--t:0.69s" d="M57 186 80 201 98 262 117 273 133 262 151 201 177 185 185 124"/><path pathLength="1" style="--d:0.27s;--t:0.40s" d="M116 274 116 331"/><path pathLength="1" style="--d:0.28s;--t:0.40s" d="M177 185 188 196 188 340"/><path pathLength="1" style="--d:0.32s;--t:0.54s" d="M246 346 251 339 260 297 266 291 269 254 292 148 308 137"/><path pathLength="1" style="--d:0.37s;--t:0.60s" d="M266 292 351 291 348 256 325 148 309 137"/><path pathLength="1" style="--d:0.42s;--t:0.40s" d="M352 292 357 297 366 339 371 346"/><path pathLength="1" style="--d:0.44s;--t:0.69s" d="M435 120 436 338 440 344 504 345"/><path pathLength="1" style="--d:0.50s;--t:0.40s" d="M561 344 571 299 576 293"/><path pathLength="1" style="--d:0.52s;--t:0.70s" d="M618 139 602 152 580 256 578 293 659 291 654 245 634 152 618 139"/><path pathLength="1" style="--d:0.61s;--t:0.40s" d="M659 292 664 296 673 338 678 346"/><path pathLength="1" style="--d:0.62s;--t:0.54s" d="M735 120 744 175 744 179 736 187 736 341"/><path pathLength="1" style="--d:0.67s;--t:0.70s" d="M745 180 772 195 799 264 826 279 835 270 835 121"/><path pathLength="1" style="--d:0.74s;--t:0.40s" d="M826 280 835 340"/><path pathLength="1" style="--d:0.75s;--t:0.70s" d="M925 115 964 117 984 124 996 136 1002 155 1002 306 993 329 985 336 970 342 910 344 905 339 904 128 908 117 925 115"/><path pathLength="1" style="--d:0.89s;--t:0.70s" d="M1073 244 1074 119 1082 115 1116 115 1141 118 1153 123 1165 135 1171 157 1173 182 1168 216 1147 245 1073 246 1073 340"/><path pathLength="1" style="--d:1.01s;--t:0.40s" d="M1148 245 1163 278 1167 340"/><path pathLength="1" style="--d:1.03s;--t:0.40s" d="M1229 346 1241 299 1246 293"/><path pathLength="1" style="--d:1.04s;--t:0.70s" d="M1289 139 1273 151 1251 252 1248 293 1330 291 1327 258 1305 150 1290 139"/><path pathLength="1" style="--d:1.14s;--t:0.40s" d="M1331 292 1336 299 1344 338 1348 345"/></g>
-          <rect class="draw__all" style="--d:1.74s" width="1400" height="464" fill="#fff"/>
-        </mask>
-        <image href="assets/img/logo.webp" width="1400" height="464" mask="url(#logo-mask)"/>
-      </svg>
+      <!-- La fachada se dibuja al cargar: los trazos son una máscara sobre la imagen original. -->
+      <img class="intro__logo" src="assets/img/logo.webp" width="1400" height="464" alt="Malandra">
 
       <div class="facade" id="facade">
         <svg class="facade__art draw" viewBox="0 0 935 800" width="935" height="800" aria-hidden="true">
@@ -83,6 +77,8 @@
   </section>
 
   <main>
+    <!-- Aire entre la puerta y la carta: da margen para volver un poco hacia arriba sin que la entrada tape el contenido. -->
+    <div class="carta__air" aria-hidden="true"></div>
     <section class="carta" id="carta" aria-labelledby="carta-title">
       <div class="carta__head" id="carta-head">
         <p class="eyebrow">Parrilla al carbón · Caballito</p>

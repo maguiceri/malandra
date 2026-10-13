@@ -174,6 +174,7 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
 .intro__logo {
   width: min(78vw, 440px, 50vh);
   opacity: calc(1 - var(--p) * 6);
+  animation: asoma .5s backwards;   /* el nombre aparece entero */
 }
 
 .facade {
@@ -185,14 +186,15 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
 }
 .facade__art { width: 100%; }
 
-/* Se dibujan al cargar: cada trazo de la máscara se va completando y destapa la imagen. */
-.draw { display: block; height: auto; }
+/* Se dibuja al cargar: cada trazo de la máscara se va completando y destapa la imagen. */
+.draw { display: block; height: auto; --ritmo: .6; }
 .draw__paths path {
   fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: 1;
-  animation: trazo var(--t) var(--d) cubic-bezier(.45, 0, .25, 1) backwards;
+  /* --d y --t vienen de cada trazo; --ritmo los acelera a todos juntos (1 = original, menos = más rápido) */
+  animation: trazo calc(var(--t) * var(--ritmo)) calc((var(--d) - .7s) * var(--ritmo) + .2s) cubic-bezier(.45, 0, .25, 1) backwards;
 }
-.draw__all { animation: asoma .5s var(--d) backwards; }   /* al final destapa lo que el trazo no cubrió */
+.draw__all { animation: asoma .4s calc((var(--d) - .7s) * var(--ritmo) + .2s) backwards; }   /* al final destapa lo que el trazo no cubrió */
 @keyframes trazo {
   0% { stroke-dashoffset: 1; opacity: 0; }
   2% { opacity: 1; }
@@ -200,7 +202,7 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
 }
 @keyframes asoma { from { opacity: 0; } }
 /* Si deslizan antes de que termine el dibujo, se completa de una: la puerta tiene que estar para poder entrar. */
-.is-rushed .draw__paths path, .is-rushed .draw__all, .is-rushed .facade__door, .is-rushed .intro__hint { animation: none; }
+.is-rushed .draw__paths path, .is-rushed .draw__all, .is-rushed .facade__door, .is-rushed .intro__hint, .is-rushed .intro__logo { animation: none; }
 
 .facade__door {
   position: absolute;
@@ -208,7 +210,7 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
   border-radius: 1px;
   background: var(--ember);
   box-shadow: 0 0 36px 4px rgb(219 81 49 / .55);
-  animation: brasa 2.8s ease-in-out infinite, asoma .7s 2.91s backwards;   /* se enciende cuando termina el dibujo */
+  animation: brasa 2.8s ease-in-out infinite, asoma .5s 1.5s backwards;   /* se enciende cuando termina el dibujo */
 }
 /* A mitad de camino la luz naranja se aclara hasta el color de la carta. */
 .facade__door::after {
@@ -221,7 +223,7 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
   display: flex; flex-direction: column; align-items: center; gap: 14px;
   color: #fff; text-decoration: none;
   opacity: calc(1 - var(--p) * 6);
-  animation: asoma .7s 3.31s backwards;
+  animation: asoma .5s 1.8s backwards;
 }
 .intro__hint-text {
   font-family: var(--font-script);
@@ -281,6 +283,7 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
    Carta
    ========================================================================== */
 
+.carta__air { height: 30vh; }
 .carta { scroll-margin-top: var(--topbar-h); padding-bottom: 72px; }
 .carta__head, .carta__body { max-width: var(--max); margin: 0 auto; padding-inline: var(--gutter); }
 .carta__head { padding-top: 44px; padding-bottom: 20px; }
@@ -581,5 +584,6 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
   html { scroll-behavior: auto; }
   .intro { height: auto; }
   main { margin-top: 0; }
+  .carta__air { height: 0; }
   *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
 }
