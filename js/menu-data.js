@@ -8,9 +8,6 @@
 //                   número que no use ningún otro plato.
 //  · Foto:          guardar la imagen en assets/img/platos/ y poner esa ruta en "image".
 //                   Sin foto: "image": null.
-//  · En la mesa con la cámara: guardar el modelo en assets/modelos/ y agregar al plato
-//                   "model": "assets/modelos/224.glb". La ficha muestra entonces "Verlo en mi mesa".
-//                   El modelo tiene que estar a tamaño real (en metros).
 //  · "updatedAt" es la fecha que se muestra al pie de la carta (año-mes-día).
 //
 // El orden de categorías y platos en este archivo es el orden en que aparecen en la web.
@@ -839,7 +836,6 @@ window.MALANDRA_MENU = {
      "description": "La napolitana que hizo famosa esta esquina de Caballito. Pomodoro y muzzarella fundida encima de una milanesa bien crocante.",
      "price": 37000,
      "image": "assets/img/platos/224.webp",
-    "model": "assets/modelos/224.glb",
      "groups": [
       {
        "title": "Opcion Milanesas",

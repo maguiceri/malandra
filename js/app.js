@@ -319,78 +319,9 @@
       );
     }).join('');
 
-    // En la mesa con la cámara: solo si el plato tiene un modelo cargado ("model": "assets/modelos/….glb")
-    closeAr();
-    if (d.model) prepareAr(d);
-
     dishDialog.querySelector('.sheet__scroll').scrollTop = 0;
     dishDialog.showModal();
   }
-
-  /* --- Plato en la mesa con la cámara (realidad aumentada) ------------------- */
-
-  var arDish = null, arViewer = null, viewerLoading = null;
-  var arBtn = $('sheet-ar-btn'), arNote = $('sheet-ar-note'), arBox = $('sheet-ar');
-
-  // El visor pesa ~1 MB: se baja recién al abrir un plato que tiene modelo.
-  function loadViewer() {
-    if (!viewerLoading) {
-      viewerLoading = new Promise(function (resolve, reject) {
-        var sc = document.createElement('script');
-        sc.type = 'module';
-        sc.src = 'assets/vendor/model-viewer.min.js';
-        sc.onload = resolve;
-        sc.onerror = function () { viewerLoading = null; reject(); };
-        document.head.appendChild(sc);
-      });
-    }
-    return viewerLoading;
-  }
-
-  function closeAr() {
-    arDish = null; arViewer = null;
-    arBox.innerHTML = '';
-    arBtn.hidden = true;
-    arNote.hidden = true;
-  }
-
-  // Se prepara al abrir la ficha, así el toque en el botón abre la cámara al instante
-  // (los teléfonos solo dejan abrirla como respuesta directa a un toque).
-  function prepareAr(d) {
-    arDish = d;
-    arBtn.hidden = false;
-    arBtn.disabled = true;
-    arBtn.textContent = 'Preparando la cámara…';
-    var fail = function () { if (arDish === d) closeAr(); };
-
-    loadViewer().then(function () {
-      if (arDish !== d) return;
-      // ar-scale="fixed": aparece a tamaño real (el modelo está en metros).
-      arBox.innerHTML =
-        '<model-viewer src="' + esc(d.model) + '"' + (d.modelIos ? ' ios-src="' + esc(d.modelIos) + '"' : '') +
-        ' ar ar-modes="scene-viewer quick-look webxr" ar-scale="fixed" ar-placement="floor" loading="eager" reveal="auto" shadow-intensity="0.6"></model-viewer>';
-      var mv = arBox.querySelector('model-viewer');
-      mv.addEventListener('error', fail);
-      mv.addEventListener('load', function () {
-        setTimeout(function () {
-          if (arDish !== d) return;
-          arViewer = mv;
-          if (mv.canActivateAR) {
-            arBtn.disabled = false;
-            arBtn.textContent = 'Verlo en mi mesa';
-          } else {
-            arBtn.hidden = true;
-            arNote.hidden = false;      // computadoras y teléfonos sin realidad aumentada
-          }
-        }, 300);
-      });
-    }).catch(fail);
-  }
-
-  arBtn.addEventListener('click', function () {
-    if (arViewer && arViewer.canActivateAR) arViewer.activateAR();
-  });
-  dishDialog.addEventListener('close', closeAr);
 
   $('sheet-img').addEventListener('error', function () { this.hidden = true; });
   dishDialog.addEventListener('click', function (e) { if (e.target === dishDialog) dishDialog.close(); });
