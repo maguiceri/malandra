@@ -838,6 +838,7 @@ window.MALANDRA_MENU = {
      "description": "La napolitana que hizo famosa esta esquina de Caballito. Pomodoro y muzzarella fundida encima de una milanesa bien crocante.",
      "price": 37000,
      "image": "assets/img/platos/224.webp",
+    "model": "assets/modelos/224.glb",
      "groups": [
       {
        "title": "Opcion Milanesas",
