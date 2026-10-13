@@ -475,12 +475,12 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
   box-shadow: 0 2px 8px rgb(77 72 25 / .25);
 }
 .sheet__img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--rule); }
-/* Plato en 3D / en la mesa con la cámara (solo los platos que tienen "model" en la carta) */
-.sheet__3d { position: relative; width: 100%; background: var(--white); }
-.sheet__3d model-viewer { display: block; width: 100%; height: min(56vh, 420px); --poster-color: transparent; }
-.sheet__3d .btn { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); }
-.sheet__3d-hint { padding: 10px var(--gutter) 12px; font-size: .8125rem; color: var(--ink-soft); border-top: 1px solid var(--rule); }
-.sheet__3d-btn { margin-top: 20px; }
+/* Plato en la mesa con la cámara (solo los platos que tienen "model" en la carta).
+   El visor queda invisible: solo se usa para abrir la cámara del teléfono. */
+.sheet__ar { position: absolute; width: 2px; height: 2px; overflow: hidden; opacity: 0; pointer-events: none; }
+.sheet__ar model-viewer { width: 2px; height: 2px; }
+.sheet__ar-btn { margin-top: 20px; }
+.sheet__ar-note { margin-top: 18px; padding: 12px 14px; border-radius: 10px; background: var(--white); font-size: .875rem; color: var(--ink-soft); }
 .sheet__body { padding: 24px var(--gutter) max(28px, env(safe-area-inset-bottom)); }
 .sheet__name { font-family: var(--font-title); font-weight: 400; font-size: 2.25rem; line-height: .95; text-transform: uppercase; padding-right: 52px; }
 .sheet__img:not([hidden]) + .sheet__body .sheet__name { padding-right: 0; }

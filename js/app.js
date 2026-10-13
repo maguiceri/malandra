@@ -319,21 +319,20 @@
       );
     }).join('');
 
-    // 3D: solo si el plato tiene un modelo cargado en la carta ("model": "assets/modelos/….glb")
-    close3d();
-    $('sheet-3d-btn').hidden = !d.model;
-    openModel = d.model ? d : null;
+    // En la mesa con la cámara: solo si el plato tiene un modelo cargado ("model": "assets/modelos/….glb")
+    closeAr();
+    if (d.model) prepareAr(d);
 
     dishDialog.querySelector('.sheet__scroll').scrollTop = 0;
     dishDialog.showModal();
   }
 
-  /* --- Plato en 3D y en la mesa (realidad aumentada) ------------------------- */
+  /* --- Plato en la mesa con la cámara (realidad aumentada) ------------------- */
 
-  var openModel = null;
-  var viewerLoading = null;
+  var arDish = null, arViewer = null, viewerLoading = null;
+  var arBtn = $('sheet-ar-btn'), arNote = $('sheet-ar-note'), arBox = $('sheet-ar');
 
-  // El visor pesa ~1 MB: se baja recién cuando alguien toca "Verlo en 3D".
+  // El visor pesa ~1 MB: se baja recién al abrir un plato que tiene modelo.
   function loadViewer() {
     if (!viewerLoading) {
       viewerLoading = new Promise(function (resolve, reject) {
@@ -348,47 +347,50 @@
     return viewerLoading;
   }
 
-  function close3d() {
-    var box = $('sheet-3d');
-    box.hidden = true;
-    box.innerHTML = '';
-    var btn = $('sheet-3d-btn');
-    btn.disabled = false;
-    btn.textContent = 'Verlo en 3D';
+  function closeAr() {
+    arDish = null; arViewer = null;
+    arBox.innerHTML = '';
+    arBtn.hidden = true;
+    arNote.hidden = true;
   }
 
-  $('sheet-3d-btn').addEventListener('click', function () {
-    var d = openModel, btn = this;
-    if (!d) return;
-    btn.disabled = true;
-    btn.textContent = 'Cargando el plato…';
+  // Se prepara al abrir la ficha, así el toque en el botón abre la cámara al instante
+  // (los teléfonos solo dejan abrirla como respuesta directa a un toque).
+  function prepareAr(d) {
+    arDish = d;
+    arBtn.hidden = false;
+    arBtn.disabled = true;
+    arBtn.textContent = 'Preparando la cámara…';
+    var fail = function () { if (arDish === d) closeAr(); };
+
     loadViewer().then(function () {
-      if (openModel !== d) return;
-      var box = $('sheet-3d');
-      // ar-scale="fixed": el plato aparece en la mesa a tamaño real (el modelo tiene que estar en metros).
-      box.innerHTML =
+      if (arDish !== d) return;
+      // ar-scale="fixed": aparece a tamaño real (el modelo está en metros).
+      arBox.innerHTML =
         '<model-viewer src="' + esc(d.model) + '"' + (d.modelIos ? ' ios-src="' + esc(d.modelIos) + '"' : '') +
-        ' alt="' + esc(d.name) + ' en 3D" ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" ar-placement="floor"' +
-        ' camera-controls touch-action="pan-y" auto-rotate shadow-intensity="1" exposure="1">' +
-          '<button slot="ar-button" class="btn btn--ember" type="button">Verlo en mi mesa</button>' +
-        '</model-viewer>' +
-        '<p class="sheet__3d-hint">Giralo con el dedo. Con “Verlo en mi mesa” se abre la cámara: apuntá a la mesa.</p>';
-      box.querySelector('model-viewer').addEventListener('error', function () {
-        box.hidden = true;
-        $('sheet-img').hidden = !d.image;
-        btn.hidden = false; btn.disabled = false;
-        btn.textContent = 'No se pudo cargar el 3D. Probar de nuevo';
+        ' ar ar-modes="scene-viewer quick-look webxr" ar-scale="fixed" ar-placement="floor" loading="eager" reveal="auto" shadow-intensity="0.6"></model-viewer>';
+      var mv = arBox.querySelector('model-viewer');
+      mv.addEventListener('error', fail);
+      mv.addEventListener('load', function () {
+        setTimeout(function () {
+          if (arDish !== d) return;
+          arViewer = mv;
+          if (mv.canActivateAR) {
+            arBtn.disabled = false;
+            arBtn.textContent = 'Verlo en mi mesa';
+          } else {
+            arBtn.hidden = true;
+            arNote.hidden = false;      // computadoras y teléfonos sin realidad aumentada
+          }
+        }, 300);
       });
-      $('sheet-img').hidden = true;
-      box.hidden = false;
-      btn.hidden = true;
-      dishDialog.querySelector('.sheet__scroll').scrollTop = 0;
-    }).catch(function () {
-      btn.disabled = false;
-      btn.textContent = 'No se pudo cargar el 3D. Probar de nuevo';
-    });
+    }).catch(fail);
+  }
+
+  arBtn.addEventListener('click', function () {
+    if (arViewer && arViewer.canActivateAR) arViewer.activateAR();
   });
-  dishDialog.addEventListener('close', function () { close3d(); openModel = null; });
+  dishDialog.addEventListener('close', closeAr);
 
   $('sheet-img').addEventListener('error', function () { this.hidden = true; });
   dishDialog.addEventListener('click', function (e) { if (e.target === dishDialog) dishDialog.close(); });

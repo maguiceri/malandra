@@ -8,8 +8,9 @@
 //                   número que no use ningún otro plato.
 //  · Foto:          guardar la imagen en assets/img/platos/ y poner esa ruta en "image".
 //                   Sin foto: "image": null.
-//  · 3D / cámara:  guardar el modelo en assets/modelos/ y agregar al plato  "model": "assets/modelos/415.glb"
-//                   El plato muestra entonces el botón "Verlo en 3D". El modelo tiene que estar a tamaño real (en metros).
+//  · En la mesa con la cámara: guardar el modelo en assets/modelos/ y agregar al plato
+//                   "model": "assets/modelos/224.glb". La ficha muestra entonces "Verlo en mi mesa".
+//                   El modelo tiene que estar a tamaño real (en metros).
 //  · "updatedAt" es la fecha que se muestra al pie de la carta (año-mes-día).
 //
 // El orden de categorías y platos en este archivo es el orden en que aparecen en la web.
