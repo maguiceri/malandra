@@ -11,7 +11,6 @@
 //  · "updatedAt" es la fecha que se muestra al pie de la carta (año-mes-día).
 //
 // El orden de categorías y platos en este archivo es el orden en que aparecen en la web.
-// La primera categoría ("Destacados") se muestra como tira de tarjetas arriba de todo.
 window.MALANDRA_MENU = {
  "updatedAt": "2026-10-13",
  "categories": [

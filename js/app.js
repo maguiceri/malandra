@@ -41,15 +41,21 @@
      ------------------------------------------------------------------------ */
 
   var dishes = new Map();
-  var featured = null;
   var cats = [];
 
-  menu.categories.forEach(function (c, i) {
+  menu.categories.forEach(function (c) {
     var all = c.items.concat((c.subcategories || []).reduce(function (acc, s) { return acc.concat(s.items); }, []));
     all.forEach(function (d) { if (!dishes.has(d.id)) dishes.set(d.id, d); });
-    if (i === 0 && /destacad/i.test(c.name)) { featured = c; return; }
-    var withPhoto = all.filter(function (d) { return d.image; })[0];
-    cats.push({ id: c.id, name: c.name, items: c.items, subcategories: c.subcategories || [], all: all, cover: withPhoto ? withPhoto.image : null });
+    cats.push({ id: c.id, name: c.name, items: c.items, subcategories: c.subcategories || [], all: all, cover: null });
+  });
+
+  // Foto de cada categoría: la de su primer plato con foto que no use otra categoría.
+  // Destacados elige al final, porque sus platos se repiten en otras categorías.
+  var usedCovers = new Set();
+  cats.slice().sort(function (a, b) { return /destacad/i.test(a.name) - /destacad/i.test(b.name); }).forEach(function (c) {
+    var photos = c.all.filter(function (d) { return d.image; });
+    var pick = photos.filter(function (d) { return !usedCovers.has(d.image); })[0] || photos[0];
+    if (pick) { c.cover = pick.image; usedCovers.add(pick.image); }
   });
   var catById = new Map(cats.map(function (c) { return [c.id, c]; }));
 
@@ -133,34 +139,18 @@
     );
   }
 
-  function cardHtml(d) {
-    var media = d.image
-      ? '<span class="card__media"><img src="' + esc(d.image) + '" alt="" loading="lazy" decoding="async"></span>'
-      : '<span class="card__media card__media--empty"><span>Para compartir</span></span>';
-    return (
-      '<li class="card">' +
-        '<button class="card__open" type="button" data-open="' + d.id + '">' + media +
-          '<span class="card__body"><span class="card__name">' + esc(d.name) + '</span>' +
-          '<span class="card__desc">' + esc(d.description) + '</span>' +
-          '<span class="card__price">' + money(d.price) + '</span></span>' +
-        '</button>' +
-      '</li>'
-    );
-  }
-
-  /* --- Índice: destacados + una baldosa por categoría ----------------------- */
+  /* --- Índice: una baldosa por categoría -------------------------------------- */
 
   function renderIndex() {
-    var html = '';
-    if (featured && featured.items.length) {
-      html += '<h2 class="block-title">' + esc(featured.name) + '</h2>';
-      html += '<ul class="featured">' + featured.items.map(cardHtml).join('') + '</ul>';
-    }
-    html += '<h2 class="block-title">Toda la carta</h2><div class="tiles">';
+    var html = '<div class="tiles">';
     var plain = ['tile--ember', '', 'tile--sand'], n = 0;
-    cats.forEach(function (c) {
+    var wide = function (c) { return /parrilla/i.test(c.name); };
+    // En el celular van de a dos: si queda una sola al final, ocupa todo el ancho.
+    var oddLast = cats.filter(function (c) { return !wide(c); }).length % 2 === 1;
+    cats.forEach(function (c, i) {
       var cls = 'tile';
-      if (/parrilla/i.test(c.name)) cls += ' tile--wide';
+      if (wide(c)) cls += ' tile--wide';
+      else if (oddLast && i === cats.length - 1) cls += ' tile--full';
       cls += c.cover ? ' tile--photo' : ' ' + plain[n++ % plain.length];
       html +=
         '<a class="' + cls + '" href="#c-' + c.id + '">' +
@@ -224,6 +214,7 @@
   function renderSearch(q) {
     var total = 0, html = '';
     cats.forEach(function (c) {
+      if (/destacad/i.test(c.name)) return;      // sus platos ya aparecen en su propia categoría
       var hits = c.all.filter(function (d) { return fold(d.name + ' ' + d.description).indexOf(q) !== -1; });
       if (!hits.length) return;
       total += hits.length;
@@ -302,10 +293,8 @@
   cartaEl.addEventListener('error', function (e) {
     var img = e.target;
     if (img.tagName !== 'IMG') return;
-    var media = img.closest('.card__media');
     var tile = img.closest('.tile');
-    if (media) { media.classList.add('card__media--empty'); media.innerHTML = '<span>De la casa</span>'; }
-    else if (tile) { tile.classList.remove('tile--photo'); img.remove(); }
+    if (tile) { tile.classList.remove('tile--photo'); img.remove(); }
     else if (img.classList.contains('chip__pic')) img.replaceWith(Object.assign(document.createElement('span'), { className: 'chip__pic' }));
     else img.remove();
   }, true);

@@ -330,39 +330,9 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
   padding: 30px 0 14px;
 }
 
-/* --- Destacados: tira para deslizar --------------------------------------- */
-
-.featured {
-  display: grid; grid-auto-flow: column; grid-auto-columns: min(80vw, 330px); gap: 14px;
-  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-  margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter) 4px;
-  scroll-padding-inline: var(--gutter);
-}
-.featured::-webkit-scrollbar { display: none; }
-.card {
-  position: relative; scroll-snap-align: start;
-  display: flex; flex-direction: column;
-  background: var(--white); border-radius: 14px; overflow: hidden;
-}
-.card__open { display: block; width: 100%; flex: 1; padding: 0; background: none; border: 0; text-align: left; cursor: pointer; }
-/* Todas las fotos miden lo mismo: caja fija de 4:3 y la foto recortada adentro. */
-.card__media { display: block; position: relative; width: 100%; height: 0; padding-top: 75%; overflow: hidden; background: var(--olive); }
-.card__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.card__media--empty span { position: absolute; inset: 0; display: grid; place-items: center; padding: 18px; font-family: var(--font-script); font-size: 2.25rem; line-height: 1.1; color: #fff; text-align: center; }
-.card__body { display: block; padding: 16px 16px 18px; }
-.card__name { font-family: var(--font-title); font-weight: 400; font-size: 1.625rem; line-height: 1; text-transform: uppercase; }
-.card__desc {
-  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
-  margin-top: 6px; min-height: 2.9em;
-  font-size: .9375rem; line-height: 1.45; color: var(--ink-soft);
-}
-.card__name, .card__price { display: block; }
-.card__price { margin-top: 8px; font-family: var(--font-title); font-weight: 500; font-size: 1.375rem; color: var(--ember-deep); }
-.card__open:focus-visible { outline-offset: -3px; }
-
 /* --- Índice visual: una baldosa por categoría ------------------------------ */
 
-.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 22px; }
 .tile {
   position: relative; display: flex; align-items: flex-end;
   aspect-ratio: 1 / 1; padding: 14px;
@@ -372,6 +342,7 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
   isolation: isolate;
 }
 .tile--wide { grid-column: span 2; aspect-ratio: 2 / 1.1; order: -1; }   /* la parrilla va primero y a lo ancho */
+.tile--full { grid-column: span 2; aspect-ratio: 2 / .8; }
 .tile--ember { background: var(--ember); }
 .tile--sand { background: var(--sand); color: var(--ink); }
 .tile img {
@@ -551,9 +522,9 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
   :root { --gutter: 32px; }
   .topbar__nav { display: flex; }
   .topbar__logo img { height: 34px; }
-  .featured { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); grid-auto-columns: auto; overflow: visible; margin-inline: 0; padding-inline: 0; }
   .tiles { grid-template-columns: repeat(4, 1fr); gap: 16px; }
   .tile--wide { aspect-ratio: auto; }
+  .tile--full { grid-column: auto; aspect-ratio: 1 / 1; }
   .sheet { margin: auto; border-radius: 20px; }
   .reservas__inner { grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; padding-block: 96px; }
   .reservas__panel { padding: 32px; }
