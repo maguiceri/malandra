@@ -171,17 +171,11 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
   text-align: center;
 }
 
-.intro__logo {
-  width: min(78vw, 440px, 50vh);
-  opacity: calc(1 - var(--p) * 6);
-  animation: asoma .5s backwards;   /* el nombre aparece entero */
-}
-
 .facade {
   position: relative;
-  width: min(100%, 620px, 62vh);
+  width: min(100%, 660px, 68vh);
   flex: none;
-  transform-origin: 53.3% 81%;   /* centro de la puerta: hacia ahí viaja la cámara */
+  transform-origin: 51% 81.5%;   /* centro de la puerta: hacia ahí viaja la cámara */
   will-change: transform;
 }
 .facade__art { width: 100%; }
@@ -202,21 +196,17 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
 }
 @keyframes asoma { from { opacity: 0; } }
 /* Si deslizan antes de que termine el dibujo, se completa de una: la puerta tiene que estar para poder entrar. */
-.is-rushed .draw__paths path, .is-rushed .draw__all, .is-rushed .facade__door, .is-rushed .intro__hint, .is-rushed .intro__logo { animation: none; }
+.is-rushed .draw__paths path, .is-rushed .draw__all, .is-rushed .intro__hint { animation: none; }
 
+/* El vano de la puerta: en reposo no se ve. Al entrar se llena con el color de la carta. */
 .facade__door {
   position: absolute;
-  left: 38%; top: 66.2%; width: 30.6%; height: 29.4%;
-  border-radius: 1px;
-  background: var(--ember);
-  box-shadow: 0 0 36px 4px rgb(219 81 49 / .55);
-  animation: brasa 2.8s ease-in-out infinite, asoma .5s 1.5s backwards;   /* se enciende cuando termina el dibujo */
+  left: 37.5%; top: 65.3%; width: 27.1%; height: 32.3%;
 }
-/* A mitad de camino la luz naranja se aclara hasta el color de la carta. */
 .facade__door::after {
   content: ""; position: absolute; inset: 0;
   background: var(--paper);
-  opacity: calc((var(--p) - .5) * 2.6);
+  opacity: calc((var(--p) - .2) * 2.5);   /* se enciende a medida que la cámara se acerca */
 }
 
 .intro__hint {
@@ -239,18 +229,13 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
 }
 .intro__hint:focus-visible { outline-color: #fff; outline-offset: 8px; }
 
-@keyframes brasa {
-  0%, 100% { box-shadow: 0 0 30px 2px rgb(219 81 49 / .45); }
-  50% { box-shadow: 0 0 52px 10px rgb(219 81 49 / .7); }
-}
 @keyframes baja {
   0%, 100% { transform: translateY(-4px); }
   50% { transform: translateY(8px); }
 }
 
 @media (max-height: 560px) {
-  .intro__logo { width: min(50vw, 300px); }
-  .facade { width: min(100%, 48vh); }
+  .facade { width: min(100%, 58vh); }
 }
 
 /* ==========================================================================
@@ -284,6 +269,9 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
    ========================================================================== */
 
 .carta__air { height: 30vh; }
+/* En una categoría o una búsqueda no hay entrada: la carta arranca arriba de todo. */
+.no-intro .intro, .no-intro .carta__air { display: none; }
+.no-intro main { margin-top: var(--topbar-h); }
 .carta { scroll-margin-top: var(--topbar-h); padding-bottom: 72px; }
 .carta__head, .carta__body { max-width: var(--max); margin: 0 auto; padding-inline: var(--gutter); }
 .carta__head { padding-top: 44px; padding-bottom: 20px; }
@@ -504,7 +492,7 @@ main { position: relative; z-index: 1; margin-top: calc(var(--topbar-h) - 100vh)
 .reservas::before {
   content: ""; position: absolute; left: -6%; bottom: -8%;
   width: min(92vw, 720px); aspect-ratio: 935 / 800;
-  background: url("../assets/img/fachada.webp") center / contain no-repeat;
+  background: url("../assets/img/fachada.webp?v=2") center / contain no-repeat;
   opacity: .14; pointer-events: none;
 }
 .reservas__inner {

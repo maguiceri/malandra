@@ -63,10 +63,10 @@
   function measure() {
     var vw = stage.clientWidth, vh = stage.clientHeight;
     var w = facade.offsetWidth, h = facade.offsetHeight;
-    // La puerta ocupa el 30,6 % × 29,4 % del dibujo y su centro está en (53,3 %, 81 %).
-    var cx = facade.offsetLeft + w * 0.533, cy = facade.offsetTop + h * 0.81;
+    // La puerta ocupa el 27,1 % × 32,3 % del dibujo y su centro está en (51 %, 81,5 %).
+    var cx = facade.offsetLeft + w * 0.51, cy = facade.offsetTop + h * 0.815;
     geo = {
-      scale: Math.max(vw / (w * 0.306), vh / (h * 0.294)) * 1.15,
+      scale: Math.max(vw / (w * 0.271), vh / (h * 0.323)) * 1.15,
       dx: vw / 2 - cx,
       dy: vh / 2 - cy,
       range: intro.offsetHeight - vh,
@@ -77,6 +77,8 @@
   var introTicking = false;
   function updateIntro() {
     introTicking = false;
+    // Dentro de una categoría o de una búsqueda la entrada no existe: no hay efecto que mover.
+    if (root.classList.contains('no-intro')) { root.classList.add('is-in'); return; }
     if (!geo) measure();
     var y = window.scrollY;
 
@@ -239,6 +241,8 @@
 
   /* --- Qué se ve ------------------------------------------------------------- */
 
+  var introChanged = false;
+
   function restart(el) { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; }
 
   function show() {
@@ -252,6 +256,16 @@
     $('carta-head').hidden = mode !== 'index';
     chipsEl.hidden = mode !== 'cat';
     $('menu-note').hidden = mode === 'search';
+
+    // El efecto de la puerta (y su marcha atrás al subir) solo vive en "todas las categorías".
+    // En una categoría o en una búsqueda la entrada se quita, así subir no desvanece la carta.
+    var collapse = mode !== 'index';
+    introChanged = root.classList.contains('no-intro') !== collapse;
+    if (introChanged) {
+      root.classList.toggle('no-intro', collapse);
+      measure();
+      updateIntro();
+    }
     return mode;
   }
 
@@ -271,6 +285,8 @@
       restart(viewCat);
       scrollToCarta();
       if (fromNavigation) $('cat-title').focus({ preventScroll: true });
+    } else if (introChanged) {
+      scrollToCarta();          // al volver al índice reaparece la entrada arriba: nos quedamos en la carta
     }
   }
   window.addEventListener('hashchange', function () { route(true); });
@@ -279,7 +295,7 @@
     var mode = show();
     if (mode !== 'search') statusEl.textContent = '';
     // La lista cambia de largo al filtrar: volvemos al principio.
-    if (cartaEl.getBoundingClientRect().top < $('topbar').offsetHeight) scrollToCarta();
+    if (introChanged || cartaEl.getBoundingClientRect().top < $('topbar').offsetHeight) scrollToCarta();
   });
 
   // Una foto que no carga no deja un hueco.
@@ -333,6 +349,7 @@
       searchEl.value = '';
       statusEl.textContent = '';
       show();
+      if (introChanged) scrollToCarta();
       searchEl.focus();
     }
   });
